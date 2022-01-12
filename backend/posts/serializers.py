@@ -7,8 +7,5 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id','body','image','timestamp','author_username')
-        
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = ('id','username','email','bio','avatar')
+
+
