@@ -1,7 +1,7 @@
 from rest_framework import generics, mixins, response, status, viewsets
 from django.contrib.auth import get_user_model
 from .models import Post
-from .serializers import PostSerializer, UserSerializer
+from .serializers import PostSerializer
 from .pagination import PostPagination
 
 # Create your views here.
