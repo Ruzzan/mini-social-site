@@ -1,7 +1,8 @@
 from rest_framework import generics, mixins, response, status, viewsets
 from django.contrib.auth import get_user_model
 from .models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, PostDetailSerializer
+from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
 
 # Create your views here.
@@ -10,6 +11,9 @@ class PostListAPI(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     pagination_class = PostPagination
 
-class PostDetailAPI(generics.RetrieveAPIView):
+class PostDetailAPI(generics.RetrieveDestroyAPIView):
+    permission_classes = (IsAuthorOrReadOnly,)
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostDetailSerializer
+
+
