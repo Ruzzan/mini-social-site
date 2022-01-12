@@ -15,3 +15,11 @@ class Post(models.Model):
         if self.body:
             return self.body
         return str(self.pk)
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post,on_delete=models.CASCADE,related_name='comments')
+    author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
+    body = models.TextField()
+
+    def __str__(self):
+        return self.body
