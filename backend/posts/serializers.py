@@ -19,15 +19,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author_detail = UserSerializer(source='author',read_only=True)
-    post_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Comment
-        fields = ('id','body','author','author_detail','post_id')
-    
-    def create(self,**kwargs):
-        data = self.validated_data(**kwargs)
-        new_comment = CommentSerializer(data=data)
-        new_comment.save()
+        fields = ('id','body','author','author_detail','post')
 
 # post detail with comments and user data
 class PostDetailSerializer(serializers.ModelSerializer):
