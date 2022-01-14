@@ -10,22 +10,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 # post serializer along with the author data
 class PostSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    author_detail = UserSerializer(source='author',read_only=True)
+    image = serializers.ImageField(required=False, max_length=None, 
+                                     allow_empty_file=True, use_url=True,allow_null=True)
     class Meta:
         model = Post
-        fields = ('id','body','image','timestamp','author')
+        fields = ('id','body','image','timestamp','author','author_detail')
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    author_detail = UserSerializer(source='author',read_only=True)
+    post_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Comment
-        fields = ('id','author','body','author')
+        fields = ('id','body','author','author_detail','post_id')
+    
+    def create(self,**kwargs):
+        data = self.validated_data(**kwargs)
+        new_comment = CommentSerializer(data=data)
+        new_comment.save()
 
 # post detail with comments and user data
 class PostDetailSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    author_detail = UserSerializer(source='author',read_only=True)
     comments = CommentSerializer(many=True,read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id','body','image','timestamp','author','comments')
+        fields = ('id','body','image','timestamp','author','author_detail','comments')
