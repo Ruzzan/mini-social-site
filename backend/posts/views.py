@@ -1,8 +1,8 @@
-from rest_framework import generics, mixins, response
+from rest_framework import generics, mixins, response, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from django.contrib.auth import get_user_model
-from .models import Post
-from .serializers import PostSerializer, PostDetailSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
 
@@ -31,4 +31,20 @@ class PostUpdateDeleteView(generics.RetrieveAPIView,mixins.UpdateModelMixin,mixi
         self.perform_destroy(instance)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
+# comment create view
+class CommentCreateAPI(generics.CreateAPIView):
+    model = Comment
+    serializer_class = CommentSerializer
 
+class CommentDelete(generics.RetrieveDestroyAPIView):
+    model = CommentSerializer
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
+
+    def delete(self,request,*args,**kwargs):
+        instance = self.get_object()
+        print(instance)
+        self.perform_destroy(instance)
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
