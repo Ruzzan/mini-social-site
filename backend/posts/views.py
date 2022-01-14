@@ -1,8 +1,9 @@
 from rest_framework import generics, mixins, response, status
+from rest_framework.decorators import api_view
 from rest_framework.parsers import FormParser, MultiPartParser
 from django.contrib.auth import get_user_model
 from .models import Post, Comment
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, LikeSerializer
 from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
 
@@ -48,3 +49,14 @@ class CommentDelete(generics.RetrieveDestroyAPIView):
         print(instance)
         self.perform_destroy(instance)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def PostLikeAPI(request):
+    if request.method == "POST":
+        like_serializer = LikeSerializer(data=request.data)
+        if like_serializer.is_valid():
+            post_id = like_serializer.initial_data.get('id')
+            post = Post.objects.get(pk=int(post_id))
+            post.likes.add(request.user)
+            return response.Response({"data":"Liked"})
+    return response.Response({"data":"Error"})

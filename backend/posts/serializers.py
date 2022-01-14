@@ -15,7 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
                                      allow_empty_file=True, use_url=True,allow_null=True)
     class Meta:
         model = Post
-        fields = ('id','body','image','timestamp','author','author_detail')
+        fields = ('id','body','image','timestamp','author','author_detail','likes')
 
 class CommentSerializer(serializers.ModelSerializer):
     author_detail = UserSerializer(source='author',read_only=True)
@@ -31,3 +31,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id','body','image','timestamp','author','author_detail','comments')
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('id',)
