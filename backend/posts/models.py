@@ -6,6 +6,7 @@ class Post(models.Model):
     author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
     body   = models.TextField(blank=True,null=True)
     image  = models.ImageField(upload_to='post/',blank=True,null=True)
+    likes  = models.ManyToManyField(get_user_model(),blank=True,related_name='likes')
     timestamp = models.DateField(auto_now_add=True)
 
     class Meta:
