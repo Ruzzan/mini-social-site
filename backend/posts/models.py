@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 class Post(models.Model):
     author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
     body   = models.TextField(blank=True,null=True)
-    image  = models.ImageField(upload_to='post/')
+    image  = models.ImageField(upload_to='post/',blank=True,null=True)
     timestamp = models.DateField(auto_now_add=True)
 
     class Meta:
