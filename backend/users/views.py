@@ -1,4 +1,5 @@
 from rest_framework import generics, views
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializer import UserSerializer
 from django.contrib.auth import get_user_model
@@ -26,4 +27,14 @@ class ProfileAPI(views.APIView):
         'posts':self.get_user_posts()
     })
 
-    
+@api_view(['GET'])
+def follow_user(request,pk):
+    user = get_user_model().objects.get(pk=pk)
+    current_user = request.user
+    if current_user in user.followers.all():
+        user.followers.remove(current_user)
+        return  Response({"data":"Unfollowed"})
+    else:
+        user.followers.add(current_user)
+        return Response({"data":"Followed"})
+
