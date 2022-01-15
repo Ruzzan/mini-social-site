@@ -28,6 +28,17 @@ class ProfileAPI(views.APIView):
     })
 
 @api_view(['GET'])
+def UserDetailAPI(request,pk):
+        user = get_user_model().objects.get(pk=pk)
+        user_serializer = UserSerializer(user).data
+        user_posts = Post.objects.filter(author=user)
+        post_serializer = PostSerializer(user_posts,many=True).data
+        return Response({
+            'user':user_serializer,
+            'posts':post_serializer
+        })
+
+@api_view(['GET'])
 def follow_user(request,pk):
     user = get_user_model().objects.get(pk=pk)
     current_user = request.user
