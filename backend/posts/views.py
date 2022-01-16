@@ -3,15 +3,25 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import FormParser, MultiPartParser
 from django.contrib.auth import get_user_model
 from .models import Post, Comment
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer, LikeSerializer
+from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
+from django.db.models import Q
 
 # Create your views here.
 class PostListAPI(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
     pagination_class = PostPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        #get the followings
+        following_users = [following.id for following in user.followers.all()]
+        # check if following is 1 or more than 1 show the followers post else show all
+        if following_users != []: # if len(following_users) >= 1:
+            return Post.objects.filter(Q(author_id__in=following_users)|
+            Q(author=self.request.user)).distinct()
+        return Post.objects.all()
 
 class PostDetailAPI(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAuthorOrReadOnly,)
@@ -50,13 +60,15 @@ class CommentDelete(generics.RetrieveDestroyAPIView):
         self.perform_destroy(instance)
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['POST'])
-def PostLikeAPI(request):
-    if request.method == "POST":
-        like_serializer = LikeSerializer(data=request.data)
-        if like_serializer.is_valid():
-            post_id = like_serializer.initial_data.get('id')
-            post = Post.objects.get(pk=int(post_id))
+@api_view(['GET'])
+def PostLikeAPI(request,pk):
+    try:
+        post = Post.objects.get(pk=pk) 
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+            return response.Response({"data":"Unliked"})
+        else:
             post.likes.add(request.user)
             return response.Response({"data":"Liked"})
-    return response.Response({"data":"Error"})
+    except Post.DoesNotExist:
+        return response.Response(status.HTTP_404_NOT_FOUND)
