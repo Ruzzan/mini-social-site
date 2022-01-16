@@ -38,6 +38,16 @@ def UserDetailAPI(request,pk):
             'posts':post_serializer
         })
 
+@api_view(['GET','PATCH'])
+def UpdateUserAPI(request):
+    serializer = UserSerializer(request.user)
+    if request.method == "PATCH":
+        serializer = UserSerializer(request.user,request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def follow_user(request,pk):
     user = get_user_model().objects.get(pk=pk)
