@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account', # new
     'posts',
     'users',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
