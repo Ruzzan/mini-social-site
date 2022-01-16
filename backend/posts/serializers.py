@@ -13,9 +13,13 @@ class PostSerializer(serializers.ModelSerializer):
     author_detail = UserSerializer(source='author',read_only=True)
     image = serializers.ImageField(required=False, max_length=None, 
                                      allow_empty_file=True, use_url=True,allow_null=True)
+    total_likes = serializers.SerializerMethodField()
     class Meta:
         model = Post
-        fields = ('id','body','image','timestamp','author','author_detail','likes')
+        fields = ('id','body','image','total_likes','timestamp','author','author_detail')
+    
+    def get_total_likes(self,instance):
+        return instance.likes.count()
 
 class CommentSerializer(serializers.ModelSerializer):
     author_detail = UserSerializer(source='author',read_only=True)
@@ -24,15 +28,11 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id','body','author','author_detail','post')
 
 # post detail with comments and user data
-class PostDetailSerializer(serializers.ModelSerializer):
+class PostDetailSerializer(PostSerializer):
     author_detail = UserSerializer(source='author',read_only=True)
     comments = CommentSerializer(many=True,read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id','body','image','timestamp','author','author_detail','comments')
+        fields = ('id','body','image','timestamp','author','author_detail','comments','total_likes')
 
-class LikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ('id',)
