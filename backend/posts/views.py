@@ -72,3 +72,14 @@ def PostLikeAPI(request,pk):
             return response.Response({"data":"Liked"})
     except Post.DoesNotExist:
         return response.Response(status.HTTP_404_NOT_FOUND)
+
+class PostSearch(generics.ListAPIView):
+    serializer_class = PostSerializer
+    pagination_class = PostPagination
+
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        search_query = self.request.query_params.get('q',None)
+        if search_query:
+            queryset = Post.objects.filter(body__icontains=search_query)
+        return queryset
