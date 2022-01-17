@@ -59,3 +59,12 @@ def follow_user(request,pk):
         user.followers.add(current_user)
         return Response({"data":"Followed"})
 
+class UserSearch(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = get_user_model().objects.all()
+        search_query = self.request.query_params.get('q',None)
+        if search_query:
+            queryset = get_user_model().objects.filter(username__icontains=search_query)
+        return queryset
