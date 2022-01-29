@@ -10,4 +10,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('id','username', 'email' ,'avatar', 'bio','total_followers')
-        
+
+# this will be passed when login 
+class TokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields =  ('id','username' ,'avatar')
