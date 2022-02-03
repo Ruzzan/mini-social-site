@@ -13,13 +13,14 @@ class UsersListAPI(generics.ListAPIView):
     serializer_class = UserSerializer
 
 class ProfileAPI(views.APIView):
+#context = {'request':self.request} will pass the domain name / abs url of the media file
     def get_current_user(self):
-        user_serializer = UserSerializer(self.request.user)
+        user_serializer = UserSerializer(self.request.user,context={'request': self.request})
         return user_serializer.data
     
     def get_user_posts(self):
         user_posts = Post.objects.filter(author=self.request.user)
-        return PostSerializer(user_posts,many=True).data
+        return PostSerializer(user_posts,many=True,context={'request':self.request}).data
 
     def get(self,*args,**kwargs):
         return Response({
@@ -30,9 +31,9 @@ class ProfileAPI(views.APIView):
 @api_view(['GET'])
 def UserDetailAPI(request,pk):
         user = get_user_model().objects.get(pk=pk)
-        user_serializer = UserSerializer(user).data
+        user_serializer = UserSerializer(user,context={'request':request}).data
         user_posts = Post.objects.filter(author=user)
-        post_serializer = PostSerializer(user_posts,many=True).data
+        post_serializer = PostSerializer(user_posts,many=True,context={'request':request}).data
         return Response({
             'user':user_serializer,
             'posts':post_serializer
