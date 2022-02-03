@@ -7,11 +7,13 @@ from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
 from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
 from django.db.models import Q
+from rest_framework.parsers import FileUploadParser,MultiPartParser,FormParser
 
 # Create your views here.
 class PostListAPI(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     pagination_class = PostPagination
+    parser_classes = (MultiPartParser,FormParser)
 
     def get_queryset(self):
         user = self.request.user
@@ -22,6 +24,9 @@ class PostListAPI(generics.ListCreateAPIView):
             return Post.objects.filter(Q(author_id__in=following_users)|
             Q(author=self.request.user)).distinct()
         return Post.objects.all()
+    
+    def perform_create(self,serializer):
+        return serializer.save(author=self.request.user)
 
 class PostDetailAPI(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAuthorOrReadOnly,)
