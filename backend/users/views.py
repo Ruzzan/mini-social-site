@@ -1,7 +1,7 @@
 from rest_framework import generics, views
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import UserSerializer
+from .serializer import UserSerializer,UserUpdateSerializer
 from django.contrib.auth import get_user_model
 from posts.models import Post
 from posts.serializers import PostSerializer
@@ -41,9 +41,9 @@ def UserDetailAPI(request,pk):
 
 @api_view(['GET','PATCH'])
 def UpdateUserAPI(request):
-    serializer = UserSerializer(request.user)
+    serializer = UserUpdateSerializer(request.user)
     if request.method == "PATCH":
-        serializer = UserSerializer(request.user,request.data,partial=True)
+        serializer = UserUpdateSerializer(request.user,request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
