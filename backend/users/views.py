@@ -1,5 +1,5 @@
-from rest_framework import generics, views
-from rest_framework.decorators import api_view
+from rest_framework import generics, views, parsers
+from rest_framework.decorators import api_view,parser_classes
 from rest_framework.response import Response
 from .serializer import UserSerializer,UserUpdateSerializer
 from django.contrib.auth import get_user_model
@@ -40,6 +40,7 @@ def UserDetailAPI(request,pk):
         })
 
 @api_view(['GET','PATCH'])
+@parser_classes([parsers.MultiPartParser,parsers.FormParser])
 def UpdateUserAPI(request):
     serializer = UserUpdateSerializer(request.user)
     if request.method == "PATCH":
