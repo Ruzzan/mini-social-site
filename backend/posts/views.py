@@ -8,6 +8,7 @@ from .permission import IsAuthorOrReadOnly
 from .pagination import PostPagination
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser,MultiPartParser,FormParser
+from users.serializer import UserSerializer
 
 # Create your views here.
 class PostListAPI(generics.ListCreateAPIView):
@@ -52,6 +53,9 @@ class CommentCreateAPI(generics.CreateAPIView):
     model = Comment
     serializer_class = CommentSerializer
 
+    def perform_create(self,serializer):
+        return serializer.save(author=self.request.user)
+
 class CommentDelete(generics.RetrieveDestroyAPIView):
     model = CommentSerializer
     serializer_class = CommentSerializer
@@ -78,13 +82,25 @@ def PostLikeAPI(request,pk):
     except Post.DoesNotExist:
         return response.Response(status.HTTP_404_NOT_FOUND)
 
-class PostSearch(generics.ListAPIView):
-    serializer_class = PostSerializer
-    pagination_class = PostPagination
 
-    def get_queryset(self):
-        queryset = Post.objects.all()
-        search_query = self.request.query_params.get('q',None)
-        if search_query:
-            queryset = Post.objects.filter(body__icontains=search_query)
-        return queryset
+@api_view(['GET'])
+def search(request):
+    post_query = request.GET.get('post',None)
+    user_query = request.GET.get('user',None)
+    User = get_user_model()
+    if post_query and not user_query:
+        queryset = Post.objects.filter(body__icontains=post_query)
+        return response.Response({"posts":PostSerializer(queryset,many=True).data})
+
+    if user_query and not post_query:
+        queryset = User.objects.filter(username__icontains=user_query)
+        return response.Response({"users":UserSerializer(queryset,many=True).data})
+
+    if post_query and user_query:
+        posts = Post.objects.filter(body__icontains=post_query)
+        users = User.objects.filter(username__icontains=user_query)
+        return response.Response({
+            "posts":PostSerializer(posts,many=True).data,
+            "users":UserSerializer(users,many=True).data
+        })
+    return []
