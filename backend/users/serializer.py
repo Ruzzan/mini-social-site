@@ -11,12 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_is_following(self,instance):
         request = self.context.get('request',None)
-        user = request.user
-        return user in instance.followers.all()
+        if request:
+            user = request.user
+            return user in instance.followers.all()
 
     class Meta:
         model = get_user_model()
         fields = ('id','username', 'email' ,'avatar', 'bio','total_followers','is_following')
+        extra_kwargs = {'is_following': {'required': False}}
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
