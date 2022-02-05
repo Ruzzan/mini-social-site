@@ -27,6 +27,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id','body','author','author_detail','post')
+        extra_kwargs = {'author': {'required': False}}
 
 # post detail with comments and user data
 class PostDetailSerializer(PostSerializer):
