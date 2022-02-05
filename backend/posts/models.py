@@ -22,5 +22,8 @@ class Comment(models.Model):
     author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
     body = models.TextField()
 
+    class Meta:
+        ordering = ('-id',)
+        
     def __str__(self):
         return self.body
