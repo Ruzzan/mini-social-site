@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Ubuntu&display=swap');
+
+section  {
+background: #f4f8fc;
+min-height: 100vh;
+max-height: max-content;
+}
+
+section > div {
+  background: #f4f8fc;
+}
+
+#main__container {
+  margin-top: 3em;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+#search__box {
+width: auto;
+background: #f0f5fa;
+}
+
+.create {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+height: auto;
+background: #fff;
+width: 80%;
+margin: auto;
+padding:0.5em;
+}
+
+.create__post {
+width: 100%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+#create__input {
+height:2.7em;
+width:84.5%;
+border:none;
+font-family:Ubuntu;
+font-weight:500;
+}
+
+.btn__primary {
+border: none;
+background: #445ef3;
+color: #fdfdfd;
+padding: 0.3em 0.8em;
+}
+
+.btn__primary:hover {
+transition: 0.2s;
+background: #394dbe;
+}
+
+#post__button {
+width:100%;
+margin:0.9em auto;
+margin-bottom: 0;
+}
+
+.dummy__img {
+  height: 24em;
+  width: 100%;
+}
+
+.post__card {
+  width: 80%;
+  margin:1.5em auto;
+  background: #fff;
+  padding: 0.3em;
+}
+
+.post__header,.post__action {
+  display: flex;
+  justify-content: flex-start;
+  align-items:center;
+}
+
+.post__header p {
+  margin: 0 0.5em;
+  color: #747474;
+  font-family: 'Roboto';
+  font-size: 0.8em;
+}
+
+.post__body p {
+  margin: 0.5em 0 0.3em 0;
+  font-family: 'Ubuntu';
+  color: #464545;
+  font-size: 0.9em;
+}
+
+.post__action {
+  margin-top: 0.5em;
+}
+
+.post__action span {
+  font-family: 'Ubuntu';
+  color: #666666;
+}
+
+.post__action i {
+  font-size: 1.25em;
+  cursor: pointer;
+  color: rgb(187, 184, 184);
+}
+.loader {
+  border: 0.3em solid #f3f3f3; /* Light grey */
+  border-top: 0.3em solid #445ef3; /* Blue */
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+  animation: spin 2s linear infinite;
+  overflow-y: hidden;
+  position: absolute;
+  margin-top:2em;
+  left: 45%;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.deleted {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+}

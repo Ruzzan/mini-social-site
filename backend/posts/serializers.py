@@ -17,7 +17,9 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('id','body','image','total_likes','timestamp','author','author_detail')
-        extra_kwargs = {'author': {'required': False}}
+        extra_kwargs = {
+            'author': {'required': False},
+        }
     
     def get_total_likes(self,instance):
         return instance.likes.count()

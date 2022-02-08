@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat</title>
+</head>
+<body>
+        <input type="text" id="room" placeholder="Room Name"/><button id="room-btn">join</button>
+        <br> <br> <br>
+        <input type="text" id="msg-box" /><button id="msg-btn">send</button>
+
+        <div id="msg-list"></div>
+</body>
+
+<script>
+    let roomBox = document.querySelector("#room");
+    let roomBtn = document.querySelector("#room-btn");
+
+    let msgBox = document.querySelector("#msg-box");
+    let msgBtn = document.querySelector("#msg-btn");
+
+    roomBtn.addEventListener("click",()=>{
+
+        let roomName = roomBox.value
+        let socketPath = 'ws://'+window.location.host+'/ws/chat/'+roomName+'/'
+        const websocket = new WebSocket(socketPath);
+        websocket.onerror = ()=>console.log("Websocket error asd");
+
+        websocket.onmessage = function(e) {
+            let data = JSON.parse(e.data)
+            console.log(data)
+            let p = document.createElement("p");
+            if(data.user) {
+                p.textContent = data.user+":"+ ' ' + data.message;
+             //   console.log("current user:",user,"new message user:",data.user)
+            } else {
+                p.textContent = data.message;
+            }
+
+            document.querySelector("#msg-list").appendChild(p)
+        }
+
+        msgBox.focus()
+        msgBox.addEventListener("keyup",function (e) {
+            if (e.keyCode === 13) {  // enter, return
+                msgBtn.click();
+            }
+        })
+
+        msgBtn.addEventListener("click",function() {
+            let message = {
+                "type":"c","message":msgBox.value,
+                'notify':'sent/recieved'
+            }
+            websocket.send(JSON.stringify(message))
+            msgBox.value = ''
+
+        })
+
+        // notification websocket 
+        /*let notifyPath = 'ws://'+window.location.host+'/ws/notification/'+roomName+'/'
+        const notificationWebSocket = new WebSocket(notifyPath);    
+
+        notificationWebSocket.onmessage = function(e) {
+            console.log(e.data)
+        } */
+
+    })
+
+    
+    /*
+    json = {'msg':"",'user':'a','notify':'recieved'}
+    notify == if incoming json ko user === js ma assigned vako member dont show the notificatioin else show it in frontend
+    */
+
+
+</script>
+
+</html>

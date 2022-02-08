@@ -90,7 +90,11 @@ def search(request):
     User = get_user_model()
     if post_query and not user_query:
         queryset = Post.objects.filter(body__icontains=post_query)
-        return response.Response({"posts":PostSerializer(queryset,many=True).data})
+        return response.Response({
+            "posts":PostSerializer(
+                queryset,many=True,
+            context={'request':request}).data
+        })
 
     if user_query and not post_query:
         queryset = User.objects.filter(username__icontains=user_query)
@@ -100,7 +104,7 @@ def search(request):
         posts = Post.objects.filter(body__icontains=post_query)
         users = User.objects.filter(username__icontains=user_query)
         return response.Response({
-            "posts":PostSerializer(posts,many=True).data,
+            "posts":PostSerializer(posts,many=True,context={'request':request}).data,
             "users":UserSerializer(users,many=True).data
         })
     return []
